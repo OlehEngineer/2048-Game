@@ -12,6 +12,11 @@ HEIGHT = WIDTH + 110
 TITLE = pygame.Rect((0,0),(WIDTH,110))
 WHITE = (255,255,255)
 BLACK = (1,1,1)
+GREEN = (0,181,26)  # RAL 6038 - color for WINNER message
+RED = (255,42,27)    #RAL 3026 - color for lose massage
+WIN = pygame.Rect((0,0),(200,100))
+LOSE = pygame.Rect((0,0),(200,100))
+winner_value = 2048
 '''**************************************************************'''
 
 current_grid = np.zeros((4,4))                                          # creating of empty matrix (zero matrix)
@@ -33,12 +38,13 @@ font_grid_cell = pygame.font.SysFont('arial', 56,bold=True,italic=False)# creati
 
 running = True
 
-while running:                                                          #cycle whicj check if palyer close the window
+while running:                                                          #cycle which check if palyer close the window
     for even in pygame.event.get():
         
         if even.type == pygame.QUIT:
             pygame.quit
             sys.exit(0)
+
 
             
         '''creating a rectangle of cell and add appropriate value from the Grid matrix'''
@@ -93,13 +99,41 @@ while running:                                                          #cycle w
             
             pygame.display.update()
             '*********************************************'
-            '''check is there empty cell (with zero) in the matrix. In case no, quit the game'''
-            status = is_empty_cell(current_grid)
-            if status == "STOP":
-                pygame.quit
-                sys.exit(0)
-            elif status == "GO":
-                pass
-            
-            pygame.display.update()
+    '''check is there empty cell (with zero) in the matrix. In case no, player lose'''
+    status = is_empty_cell(current_grid)
+    if status == "STOP":
+        pygame.draw.rect(screen,RED,LOSE)
+
+        lose_bunner = font.render("YOU ARE LOSE!!!", True, BLACK, RED)
+
+        screen.blit(lose_bunner,(75,300))
+        pygame.draw.rect(screen,score_color,TITLE)              # 
+                
+        score = font.render('Score: '+ str(grid_score(current_grid)), True, BLACK,score_color)
+                
+        screen.blit(score, (10,25))
+    elif status == "GO":
+        pass
+    
+    pygame.display.update()
+
+    '''check the WIN status. In case of any cell has value 2048 you win and game stopped'''
+    actual_score = int(grid_score(current_grid))
+    if actual_score == winner_value:
+
+        pygame.draw.rect(screen,GREEN,WIN)
+
+        win_bunner = font.render("YOU ARE WINNER!!!", True, BLACK, GREEN)
+
+        screen.blit(win_bunner,(50,300))
+        
+        pygame.draw.rect(screen,score_color,TITLE)              # 
+                
+        score = font.render('Score: '+ str(grid_score(current_grid)), True, BLACK,score_color)
+                
+        screen.blit(score, (10,25))
+
+    else:
+        pass
+    pygame.display.update()
         
